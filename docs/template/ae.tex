@@ -30,82 +30,154 @@
 
 \appendix
 \section{Artifact Appendix}
+\label{sec:artifact}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Abstract}
+\label{subsec:artifact-abs}
 
-{\em Obligatory. Summarize your artifacts (including algorithms, models, data sets, software and hardware) 
-and how they help to reproduce the key results from your paper.}
+%{\em Obligatory. Summarize your artifacts (including algorithms, models, data sets, software and hardware) and how they help to reproduce the key results from your paper.}
+
+This document contains instructions on how to reproduce the key results from ``CPElide: Efficient Multi-Chiplet GPU Implicit Synchronization'', which appears at the 2024 IEEE/ACM International Symposium on Microarchitecture (MICRO 2024).
+Specifically, our artifact contains the instructions necessary to build the simulation infrastructure (based on gem5), along with the scripts/Makefiles to compile and run the benchmarks the performance results in our paper.
+This will allow evaluation of our results on a simulated system that contains X86 CPUs and an AMD GCN3 GPU, as described in the paper's methodology.
+To facilitate reproducing these results presented in the paper, we provide source code for gem5, the applications we study (in HIP, AMD's GPGPU programming language) -- with the annotations necessary to simulate the different approaches we study -- scripts to run these experiments, and input datasets (for applications that use input files).
 
 \subsection{Artifact check-list (meta-information)}
+\label{subsec:artifact-checklist}
 
-{\em Obligatory. Use just a few informal keywords in all fields applicable to your artifacts
-and remove the rest. This information is needed to find appropriate reviewers and gradually 
-unify artifact meta information in Digital Libraries.}
+%{\em Obligatory. Use just a few informal keywords in all fields applicable to your artifacts
+%and remove the rest. This information is needed to find appropriate reviewers and gradually 
+%unify artifact meta information in Digital Libraries.}
 
 {\small
 \begin{itemize}
-  \item {\bf Algorithm: }
-  \item {\bf Program: }
-  \item {\bf Compilation: }
-  \item {\bf Transformations: }
-  \item {\bf Binary: }
-  \item {\bf Model: }
-  \item {\bf Data set: }
-  \item {\bf Run-time environment: }
-  \item {\bf Hardware: }
-  \item {\bf Run-time state: }
-  \item {\bf Execution: }
-  \item {\bf Metrics: }
-  \item {\bf Output: }
-  \item {\bf Experiments: }
-  \item {\bf How much disk space required (approximately)?: }
-  \item {\bf How much time is needed to prepare workflow (approximately)?: }
-  \item {\bf How much time is needed to complete experiments (approximately)?: }
-  \item {\bf Publicly available?: }
-  \item {\bf Code licenses (if publicly available)?: }
-  \item {\bf Data licenses (if publicly available)?: }
-  \item {\bf Workflow automation framework used?: }
-  \item {\bf Archived (provide DOI)?: }
+  \item {\bf Algorithm}: Automated implicit synchronization elision
+  \item {\bf Program}: Babelstream, DeepBench (RNN (GRU, LSTM)), CORAL-2 (HACC, LULESH, Pennant), DNNMark (CNN), Pannotia (Color (Max), FW, SSSP), Rodinia (Backpop, BFS, BTree, DWT2D, Gaussian, Hotspot3D, Hotspot, LUD, NW,Pathfinder, SRAD\_v2), Square -- all sources and Makefiles/scripts included.
+  \item {\bf Compilation}: GCC 8, ROCm 1.6 -- all handled via a provided Dockerfile
+  \item {\bf Transformations}: Instructions to identify per GPU kernel access information (e.g., Read-Only, Read-Write) implemented as gem5 ``m5 ops'' in the provided benchmarks.
+  \item {\bf Binary}: Source code to compile/regenerate gem5 and applications binaries provided.
+  \item {\bf Model}: N/A
+  \item {\bf Data set}: CORAL-2, Pannotia, Rodinia
+  \item {\bf Run-time environment}: Dockerfile
+  \item {\bf Hardware}: We recommend an x86 CPU like \textcolor{red}{TODO}, however any CPU that can run gem5 and the provided Dockerfile should provide equivalent results.
+  \item {\bf Run-time state}: All of this is handled by the provided Dockerfile.
+  \item {\bf Execution}: Automated via provided script.
+  \item {\bf Metrics}: cycles (ticks)
+  \item {\bf Output}: Comma separated values (CSV) on command line.
+  \item {\bf Experiments}: For each benchmark we use the input size specified in Table II from the paper.
+  \item {\bf How much disk space required (approximately)?}: $\sim$20 GB ($\sim$12 GB for gem5, $\sim$8 GB for benchmarks and their datasets)
+  \item {\bf How much time is needed to prepare workflow (approximately)?}: $\sim$15 minutes to compile gem5 assuming a machine with 8 CPU cores ($\sim$1 hour for CPU with 1 core), $<$ 10 minutes to compile bechmarks and download datasets.
+  \item {\bf How much time is needed to complete experiments (approximately)?}: 
+  \item {\bf Publicly available?}: Yes.  All benchmarks, simulator, and script source code is available on GitHub: \url{https://github.com/hal-uw/cpelide-micro24}.
+  \item {\bf Code licenses (if publicly available)?}: All gem5 code uses a BSD-3 license.  The benchmarks (e.g., CORAL-2, DeepBench, DNNMark, Pannotia, Rodinia) retain their original licenses from their benchmark suites.
+  \item {\bf Data licenses (if publicly available)?}: The data sets for the benchmarks (e.g., CORAL-2, Pannotia, Rodinia) retain their original licenses from their benchmark suites.
+  \item {\bf Workflow automation framework used?}: gem5, Dockerfile, scripts
+  \item {\bf Archived (provide DOI)?}: \textcolor{red}{TODO}
 \end{itemize}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Description}
+\label{subsec:artifact-descrip}
+
+We provide a Dockerfile to setup the necessary gem5 simulation environment for a simulated CPU-GPU system. 
+In particular, this Dockerfile installs the appropriate version of AMD's open-source ROCm drivers for the GPU drivers and compilation, as well as the appropriate gcc version for the CPU phases of the applications.
+At the University of Wisconsin we simulate all benchmarks used HTCondor support to enable experiments to be done in parallel.
+However, since users may not have HTCondor support locally, and because running all experiments back-to-back on a given machine takes a significant amount of time, we only include benchmarks which can be simulated in under 3 hours.
+However, we do include the other experiments as commented out blocks in the scripts -- these commented out parts will compile the additional applications, download the appropriate input dataset(s) and simulate them in gem5.
 
 \subsubsection{How to access}
+\label{subsubsec:artifact-descrip-access}
 
-{\em Obligatory}
+%{\em Obligatory}
+
+All benchmarks, simulator, Dockerfile, and script source code is available on GitHub: \url{https://github.com/hal-uw/cpelide-micro24}  and via the Zenodo record: \url{\textcolor{red}{TODO}}.
+The provided Dockerfile will generate an environment with gcc 8 and ROCm 1.6.
+Moreover, the provided scripts will download gem5 and the provided benchmarks, set all necessary path and environment variables, then compile gem5 and the benchmarks, and finally run the benchmarks using the docker setup in gem5.
 
 \subsubsection{Hardware dependencies}
+\label{subsubsec:artifact-descrip-hw}
+
+For the simulated results, any CPU that supports gem5 can be used.
+However, we recommend a \textcolor{red}{TODO} x86 CPU, as this is what we used in creating this artifact.
 
 \subsubsection{Software dependencies}
+\label{subsubsec:artifact-descrip-sw}
+
+The provided Dockerfile will download and install all needed software.
+However, we recommend running on a system with gcc8 installed, as newer versions of gcc may cause conflicts.
 
 \subsubsection{Data sets}
+\label{subsubsec:artifact-descrip-data}
 
-\subsubsection{Models}
+The datasets associated with our provided benchmarks will be downloaded.
+
+%\subsubsection{Models}
+%\label{subsubsec:artifact-descrip-models}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Installation}
+\label{subsec:artifact-install}
 
-{\em Obligatory}
+%{\em Obligatory}
+
+The first step is to clone the provided GitHub repo or Zenodo DOI:
+
+\noindent
+\texttt{git clone https://github.com/hal-uw/cpelide-micro24}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Experiment workflow}
+\label{subsec:artifact-flow}
+
+Next, run the provided script:
+
+\noindent
+\texttt{bash ./setup-cpelide.sh}
+
+This will run the provided Dockerfile to create the necessary simulation environment (docker setup will take 30$-$45 minutes depending on system),
+The Dockerfile step will create a container with gcc8 and AMD's ROCm 1.6 drivers.
+Moreover, the script also installs everything needed to run gem5 and the benchmarks, including fetching datasets and compiling gem5 and the benchmarks.
+Thus, the script will subsequently compile gem5 and the provided applications.
+Once this initial setup is done, the script will download the necessary datasets.
+In total, gem5, the benchmarks, and the datasets should total $\sim$20 GB.
+
+To run the benchmarks, we use the provided \texttt{run-cpelide.sh} script, which utilizes the previously created docker container to run each experiment inside its environment.
+
+\noindent
+\texttt{bash ./run-cpelide.sh}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Evaluation and expected results}
+\label{subsec:artifact-res}
 
-{\em Obligatory}
+%{\em Obligatory}
+
+Running \texttt{getResults-cpelide.sh} will generate a CSV-type set of data on the command line that can be used to recreate Figure 8 in the paper.
+As mentioned above, since some applications take significant amounts of time to simulate, expect only a subset of the data for Figure 8 to be generated by default.
+Uncommenting the commented out lines in \texttt{setup-cpelide.sh} and \texttt{run-cpelide.sh} will add additional applications, but potentially require many days of additional simulation time depending on which and how many additional applications are uncommented.
+Simulating everything without use of batch submission software like HTCondor will require several months.
+
+\noindent
+\texttt{bash ./getResults-cpelide.sh}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Experiment customization}
+\label{subsec:artifact-custom}
+
+Because of the previously mentioned issues with simulation time, by default we only select Square and a subset of the Rodinia 3.1 applications.
+Users can include the other benchmarks from Section~\ref{subsec:artifact-checklist}, they can uncomment the corresponding lines in \texttt{setup-cpelide.sh} and \texttt{run-cpelide.sh}, then rerun \texttt{setup-cpelide.sh} followed by \texttt{run-cpelide.sh}.
+Here, \texttt{setup-cpelide.sh} will compile the additional applications, while \texttt{run-cpelide.sh} will simulate those applications in the provided gem5 docker container.
+Finally, once the experiments are run users should uncomment the coresponding line(s) in \texttt{getResults.sh} and re-run it to gather the updated set of results.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Notes}
+\label{subsec:artifact-notes}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Methodology}
+\label{subsec:artifact-meth}
 
 Submission, reviewing and badging methodology:
 
