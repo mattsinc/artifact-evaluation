@@ -171,7 +171,7 @@ Simulating everything without use of batch submission software like HTCondor wil
 Because of the previously mentioned issues with simulation time, by default we only select Square and a subset of the Rodinia 3.1 applications.
 Users can include the other benchmarks from Section~\ref{subsec:artifact-checklist}, they can uncomment the corresponding lines in \texttt{setup-cpelide.sh} and \texttt{run-cpelide.sh}, then rerun \texttt{setup-cpelide.sh} followed by \texttt{run-cpelide.sh}.
 Here, \texttt{setup-cpelide.sh} will compile the additional applications, while \texttt{run-cpelide.sh} will simulate those applications in the provided gem5 docker container.
-Finally, once the experiments are run users should uncomment the coresponding line(s) in \texttt{getResults.sh} and re-run it to gather the updated set of results.
+Finally, once the experiments are run users should uncomment the corresponding line(s) in \texttt{getResults-cpelide.sh} and re-run it to gather the updated set of results.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Notes}
